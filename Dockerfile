@@ -1,8 +1,10 @@
-FROM php:8.2-apache
+FROM php:8.2-fpm
 
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
+    nginx \
+    supervisor \
     libzip-dev \
     libpng-dev \
     libonig-dev \
@@ -11,8 +13,6 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_mysql mbstring zip gd intl xml
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-RUN a2dismod mpm_event mpm_worker --force && a2enmod rewrite
 
 COPY . /var/www/html
 
@@ -24,6 +24,9 @@ RUN composer install --no-dev --no-interaction --optimize-autoloader
 
 RUN php artisan storage:link
 
+COPY docker/nginx.conf /etc/nginx/sites-enabled/default
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 EXPOSE 80
 
-CMD apache2-foreground
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

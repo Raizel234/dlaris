@@ -1,1 +1,33 @@
+------------------------deploy logs------------------------------
+Starting Container
 AH00534: apache2: Configuration error: More than one MPM loaded.
+AH00534: apache2: Configuration error: More than one MPM loaded.
+AH00534: apache2: Configuration error: More than one MPM loaded.
+AH00534: apache2: Configuration error: More than one MPM loaded.
+AH00534: apache2: Configuration error: More than one MPM loaded.
+AH00534: apache2: Configuration error: More than one MPM loaded.
+AH00534: apache2: Configuration error: More than one MPM loaded.
+AH00534: apache2: Configuration error: More than one MPM loaded.
+AH00534: apache2: Configuration error: More than one MPM loaded.
+AH00534: apache2: Configuration error: More than one MPM loaded.
+AH00534: apache2: Configuration error: More than one MPM loaded.
+
+---------------------build logs------------------------------------
+Path: /
+Retry window: 5m0s
+ 
+Attempt #1 failed with service unavailable. Continuing to retry for 4m49s
+Attempt #2 failed with service unavailable. Continuing to retry for 4m38s
+Attempt #3 failed with service unavailable. Continuing to retry for 4m26s
+Attempt #4 failed with service unavailable. Continuing to retry for 4m12s
+Attempt #5 failed with service unavailable. Continuing to retry for 3m54s
+Attempt #6 failed with service unavailable. Continuing to retry for 3m28s
+Attempt #7 failed with service unavailable. Continuing to retry for 2m48s
+Attempt #8 failed with service unavailable. Continuing to retry for 2m8s
+Attempt #9 failed with service unavailable. Continuing to retry for 1m28s
+Attempt #10 failed with service unavailable. Continuing to retry for 48s
+Attempt #11 failed with service unavailable. Continuing to retry for 8s
+ 
+1/1 replicas never became healthy!
+
+Healthcheck failed!
