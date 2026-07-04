@@ -21,9 +21,8 @@ RUN chown -R www-data:www-data . \
 RUN composer install --no-dev --no-interaction --optimize-autoloader
 RUN php artisan storage:link
 
+RUN chmod +x start.sh
+
 EXPOSE 8000
 
-ENV PORT=8000
-EXPOSE 8000
-
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
+CMD ./start.sh
