@@ -15,14 +15,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-RUN chown -R www-data:www-data . \
-    && chmod -R 755 storage bootstrap/cache
+RUN chmod -R 755 storage bootstrap/cache
 
-RUN composer install --no-dev --no-interaction --optimize-autoloader
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --no-interaction --optimize-autoloader
 RUN php artisan storage:link
 
-RUN chmod +x start.sh
+EXPOSE 8080
 
-EXPOSE 8000
-
-CMD ./start.sh
+CMD php artisan serve --host=0.0.0.0 --port=8080
