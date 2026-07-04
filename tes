@@ -1,39 +1,9 @@
-------------------------deploy logs------------------------------
-2026-07-04 15:49:45,105 INFO Set uid to user 0 succeeded
-2026-07-04 15:49:45,106 INFO supervisord started with pid 1
-Starting Container
-2026-07-04 15:49:46,109 INFO spawned: 'nginx' with pid 2
-2026-07-04 15:49:46,110 INFO spawned: 'php-fpm' with pid 3
-2026-07-04 15:49:47,139 INFO success: nginx entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
-2026-07-04 15:49:47,139 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
----------------------build logs------------------------------------
-exporting to docker image format
-4s
-containerimage.descriptor: eyJtZWRpYVR5cGUiOiJhcHBsaWNhdGlvbi92bmQub2NpLmltYWdlLm1hbmlmZXN0LnYxK2pzb24iLCJkaWdlc3QiOiJzaGEyNTY6MzYwY2JkOTk3M2I3ZTc2NWQ5YTM4NDA4ZDlmYWFmNmFmYWEzMmZhYWRiNGZkM2FjNWVhYWE4NTczYTc5ODQ2NyIsInNpemUiOjQwOTMsImFubm90YXRpb25zIjp7Im9yZy5vcGVuY29udGFpbmVycy5pbWFnZS5jcmVhdGVkIjoiMjAyNi0wNy0wNFQxNTo0OToyM1oifSwicGxhdGZvcm0iOnsiYXJjaGl0ZWN0dXJlIjoiYW1kNjQiLCJvcyI6ImxpbnV4In19
-containerimage.config.digest: sha256:63e1e6682cd782c92ab8c33fe46a53b293b8c0d654029b98e8eb3cd3fa17aaa4
-containerimage.digest: sha256:360cbd9973b7e765d9a38408d9faaf6afaa32faadb4fd3ac5eaaa8573a798467
-image push
-283.2 MB / 283.4 MB
-14.1s
- 
-====================
-Starting Healthcheck
-====================
-Path: /
-Retry window: 5m0s
- 
-Attempt #1 failed with service unavailable. Continuing to retry for 4m49s
-Attempt #2 failed with service unavailable. Continuing to retry for 4m38s
-Attempt #3 failed with service unavailable. Continuing to retry for 4m26s
-Attempt #4 failed with service unavailable. Continuing to retry for 4m12s
-Attempt #5 failed with service unavailable. Continuing to retry for 3m54s
-Attempt #6 failed with service unavailable. Continuing to retry for 3m28s
-Attempt #7 failed with service unavailable. Continuing to retry for 2m48s
-Attempt #8 failed with service unavailable. Continuing to retry for 2m8s
-Attempt #9 failed with service unavailable. Continuing to retry for 1m28s
-Attempt #10 failed with service unavailable. Continuing to retry for 48s
-Attempt #11 failed with service unavailable. Continuing to retry for 8s
- 
-1/1 replicas never became healthy!
+Not Found
+The train has not arrived at the station.
 
-Healthcheck failed!
+Please check your network settings to confirm that your domain has provisioned.
+
+If you are a visitor, please let the owner know you're stuck at the station.
+
+Request ID:
+AsmolPBGQtaS8hyzJH0Vcg
