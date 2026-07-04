@@ -1,18 +1,24 @@
 ------------------------deploy logs------------------------------
+2026-07-04 15:49:45,105 INFO Set uid to user 0 succeeded
+2026-07-04 15:49:45,106 INFO supervisord started with pid 1
 Starting Container
-AH00534: apache2: Configuration error: More than one MPM loaded.
-AH00534: apache2: Configuration error: More than one MPM loaded.
-AH00534: apache2: Configuration error: More than one MPM loaded.
-AH00534: apache2: Configuration error: More than one MPM loaded.
-AH00534: apache2: Configuration error: More than one MPM loaded.
-AH00534: apache2: Configuration error: More than one MPM loaded.
-AH00534: apache2: Configuration error: More than one MPM loaded.
-AH00534: apache2: Configuration error: More than one MPM loaded.
-AH00534: apache2: Configuration error: More than one MPM loaded.
-AH00534: apache2: Configuration error: More than one MPM loaded.
-AH00534: apache2: Configuration error: More than one MPM loaded.
-
+2026-07-04 15:49:46,109 INFO spawned: 'nginx' with pid 2
+2026-07-04 15:49:46,110 INFO spawned: 'php-fpm' with pid 3
+2026-07-04 15:49:47,139 INFO success: nginx entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2026-07-04 15:49:47,139 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
 ---------------------build logs------------------------------------
+exporting to docker image format
+4s
+containerimage.descriptor: eyJtZWRpYVR5cGUiOiJhcHBsaWNhdGlvbi92bmQub2NpLmltYWdlLm1hbmlmZXN0LnYxK2pzb24iLCJkaWdlc3QiOiJzaGEyNTY6MzYwY2JkOTk3M2I3ZTc2NWQ5YTM4NDA4ZDlmYWFmNmFmYWEzMmZhYWRiNGZkM2FjNWVhYWE4NTczYTc5ODQ2NyIsInNpemUiOjQwOTMsImFubm90YXRpb25zIjp7Im9yZy5vcGVuY29udGFpbmVycy5pbWFnZS5jcmVhdGVkIjoiMjAyNi0wNy0wNFQxNTo0OToyM1oifSwicGxhdGZvcm0iOnsiYXJjaGl0ZWN0dXJlIjoiYW1kNjQiLCJvcyI6ImxpbnV4In19
+containerimage.config.digest: sha256:63e1e6682cd782c92ab8c33fe46a53b293b8c0d654029b98e8eb3cd3fa17aaa4
+containerimage.digest: sha256:360cbd9973b7e765d9a38408d9faaf6afaa32faadb4fd3ac5eaaa8573a798467
+image push
+283.2 MB / 283.4 MB
+14.1s
+ 
+====================
+Starting Healthcheck
+====================
 Path: /
 Retry window: 5m0s
  
