@@ -1,5 +1,17 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/migrate', function () {
+    Artisan::call('migrate', ['--force' => true]);
+    return nl2br(Artisan::output());
+});
+
+Route::get('/seed', function () {
+    Artisan::call('db:seed', ['--force' => true]);
+    return nl2br(Artisan::output());
+});
+
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\KategoriController as AdminKategoriController;
