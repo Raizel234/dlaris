@@ -1,6 +1,5 @@
 {
     "deploy": {
-        "restartPolicyType": "ON_FAILURE",
-        "healthcheckPath": "/"
+        "restartPolicyType": "ON_FAILURE"
     }
 }

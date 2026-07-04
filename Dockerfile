@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.2-cli
 
 RUN apt-get update && apt-get install -y \
     git \
@@ -12,11 +12,8 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* && \
-    a2enmod rewrite && \
-    echo "ServerName 127.0.0.1" >> /etc/apache2/apache2.conf
-
 COPY . /var/www/html
+WORKDIR /var/www/html
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
@@ -26,6 +23,6 @@ RUN composer install --no-dev --no-interaction --optimize-autoloader
 
 RUN php artisan storage:link
 
-EXPOSE 80
+EXPOSE 8080
 
-CMD apache2-foreground
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
