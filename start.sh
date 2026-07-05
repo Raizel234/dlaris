@@ -15,8 +15,9 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
 fi
 
-# Run migrations
+# Run migrations & seeders
 php artisan migrate --force
+php artisan db:seed --force
 
 # Start Laravel
 exec php artisan serve --host=0.0.0.0 --port=$PORT
