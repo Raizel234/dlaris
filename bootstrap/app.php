@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'log.activity' => \App\Http\Middleware\LogActivity::class,
         ]);
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
+        if (env('APP_ENV') === 'production') {
+            $middleware->trustProxies(at: '*');
+        }
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
