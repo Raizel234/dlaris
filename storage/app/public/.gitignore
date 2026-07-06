@@ -1,2 +1,8 @@
 *
 !.gitignore
+!menu/
+!settings/
+!*.jpg
+!*.jpeg
+!*.png
+!*.webp
