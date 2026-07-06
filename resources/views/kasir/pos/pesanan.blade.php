@@ -261,6 +261,17 @@
                                     <i class="fa-solid fa-chair"></i>
                                     <span x-text="'Meja ' + order.meja.nomor_meja"></span>
                                 </div>
+                                <div class="order-meja-wrap" x-show="!order.meja &amp;&amp; order.tipe_pesanan">
+                                    <i class="fa-solid fa-bag-shopping"></i>
+                                    <span x-text="order.tipe_pesanan === 'takeaway' ? 'Take Away' : order.tipe_pesanan === 'delivery' ? 'Delivery' : ''"></span>
+                                </div>
+                                <div class="order-meja-wrap" x-show="order.nama_pelanggan" style="margin-top:2px;">
+                                    <i class="fa-solid fa-user"></i>
+                                    <span x-text="order.nama_pelanggan"></span>
+                                    <template x-if="order.no_hp">
+                                        <span x-text="'(' + order.no_hp + ')'" style="color:#9ca3af;font-weight:400;"></span>
+                                    </template>
+                                </div>
                             </div>
                             <span class="badge" :class="'badge-' + order.status" x-text="order.status"></span>
                         </div>

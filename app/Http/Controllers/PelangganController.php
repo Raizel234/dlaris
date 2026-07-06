@@ -28,6 +28,13 @@ class PelangganController extends Controller
         return view('pelanggan.menu', compact('kategoris', 'meja', 'nomorMeja'));
     }
 
+    public function takeaway()
+    {
+        $kategoris = Kategori::with('menusAktif')->where('is_active', true)->get();
+
+        return view('pelanggan.takeaway', compact('kategoris'));
+    }
+
     public function getMenuByKategori($kategoriId)
     {
         $menus = Menu::where('kategori_id', $kategoriId)
@@ -201,6 +208,9 @@ class PelangganController extends Controller
     {
         $request->validate([
             'meja_id' => 'nullable|integer|exists:mejas,id',
+            'tipe_pesanan' => 'nullable|in:dine_in,takeaway,delivery',
+            'nama_pelanggan' => 'required_if:tipe_pesanan,takeaway,delivery|nullable|string|max:100',
+            'no_hp' => 'required_if:tipe_pesanan,takeaway,delivery|nullable|string|max:20',
             'catatan' => 'nullable|string|max:500',
         ]);
 
@@ -223,6 +233,9 @@ class PelangganController extends Controller
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'meja_id' => $request->meja_id,
+                'tipe_pesanan' => $request->tipe_pesanan ?? 'dine_in',
+                'nama_pelanggan' => $request->nama_pelanggan,
+                'no_hp' => $request->no_hp,
                 'nomor_order' => $nomorOrder,
                 'status' => 'menunggu',
                 'catatan' => $request->catatan,

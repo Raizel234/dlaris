@@ -44,7 +44,13 @@
                     @endif
                     <span><i class="fa-regular fa-clock w-4 text-gray-400"></i> {{ $order->created_at->diffForHumans() }}</span>
                     @if($order->tipe_pesanan)
-                        <span><i class="fa-solid fa-{{ $order->tipe_pesanan == 'dine_in' ? 'store' : 'bag-shopping' }} w-4 text-gray-400"></i> {{ $order->tipe_pesanan == 'dine_in' ? 'Dine In' : 'Take Away' }}</span>
+                        <span><i class="fa-solid fa-{{ $order->tipe_pesanan == 'dine_in' ? 'store' : 'bag-shopping' }} w-4 text-gray-400"></i> {{ $order->tipe_pesanan == 'dine_in' ? 'Dine In' : $order->tipe_pesanan == 'takeaway' ? 'Take Away' : 'Delivery' }}</span>
+                    @endif
+                    @if($order->nama_pelanggan)
+                        <span><i class="fa-solid fa-user w-4 text-gray-400"></i> {{ $order->nama_pelanggan }}</span>
+                    @endif
+                    @if($order->no_hp)
+                        <span><i class="fa-solid fa-phone w-4 text-gray-400"></i> {{ $order->no_hp }}</span>
                     @endif
                 </div>
             </div>

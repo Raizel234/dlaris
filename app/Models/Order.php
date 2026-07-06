@@ -14,6 +14,8 @@ class Order extends Model
         'status',
         'catatan',
         'tipe_pesanan',
+        'nama_pelanggan',
+        'no_hp',
         'total',
         'diskon',
         'total_setelah_diskon',

@@ -4,6 +4,7 @@
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
     <div class="d-flex flex-column gap-1">
+        <a href="{{ route('takeaway') }}" class="nav-link-custom" onclick="closeMobileMenu()"><i class="fa-solid fa-bag-shopping me-2"></i>Pesan Takeaway</a>
         <a href="{{ route('pelanggan.menu') }}" class="nav-link-custom" onclick="closeMobileMenu()"><i class="fa-solid fa-utensils me-2"></i>Lihat Menu</a>
         @auth
             @if(in_array(Auth::user()->role, ['super_admin','admin','kasir']))

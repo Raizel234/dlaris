@@ -16,6 +16,9 @@
             </div>
 
             <div class="d-none d-lg-flex align-items-center gap-2">
+                <a href="{{ route('takeaway') }}" class="btn-nav-primary" style="background:var(--coffee-gold);">
+                    <i class="fa-solid fa-bag-shopping"></i> Takeaway
+                </a>
                 @auth
                     @if(in_array(Auth::user()->role, ['super_admin','admin','kasir']))
                         <a href="{{ route('admin.dashboard') }}" class="btn-nav-primary">

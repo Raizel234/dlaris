@@ -191,6 +191,8 @@ Route::middleware(['auth', 'verified', 'log.activity'])->prefix('admin')->name('
 // Pelanggan Routes
 use App\Http\Controllers\PelangganController;
 
+Route::get('/pesan-takeaway', [PelangganController::class, 'takeaway'])->name('takeaway');
+
 Route::prefix('menu-meja')->name('pelanggan.')->group(function () {
     Route::get('/{nomorMeja?}', [PelangganController::class, 'menu'])->name('menu');
     Route::get('/kategori/{kategori}', [PelangganController::class, 'getMenuByKategori'])->name('menu.kategori');

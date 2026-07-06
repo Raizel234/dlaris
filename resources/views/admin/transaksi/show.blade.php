@@ -121,6 +121,17 @@
                     <span class="text-gray-500">Meja</span>
                     <span class="font-medium">Meja {{ $transaksi->order->meja->nomor_meja }}</span>
                 </div>
+                @elseif($transaksi->order && $transaksi->order->tipe_pesanan)
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Tipe</span>
+                    <span class="font-medium">{{ $transaksi->order->tipe_pesanan == 'takeaway' ? 'Take Away' : 'Delivery' }}</span>
+                </div>
+                @endif
+                @if($transaksi->order && $transaksi->order->nama_pelanggan)
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Pelanggan</span>
+                    <span class="font-medium">{{ $transaksi->order->nama_pelanggan }} @if($transaksi->order->no_hp)({{ $transaksi->order->no_hp }})@endif</span>
+                </div>
                 @endif
                 <div class="flex justify-between">
                     <span class="text-gray-500">Status</span>

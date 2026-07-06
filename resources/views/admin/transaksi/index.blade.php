@@ -112,7 +112,8 @@ function loadTransaksi() {
                 };
                 const namaPelanggan = t.user?.name || t.order?.user?.name || '';
                 const mejaInfo = t.order?.meja?.nomor_meja ? 'Meja ' + t.order.meja.nomor_meja : '';
-                const displayInfo = namaPelanggan || mejaInfo || '-';
+                const takeawayInfo = t.order?.nama_pelanggan ? (t.order.nama_pelanggan + (t.order.no_hp ? ' (' + t.order.no_hp + ')' : '')) : '';
+                const displayInfo = namaPelanggan || mejaInfo || takeawayInfo || '-';
                 return `
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4">${((state.page-1)*state.perPage) + i + 1}</td>

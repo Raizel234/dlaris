@@ -27,7 +27,14 @@
     <p>Tanggal: {{ $transaksi->created_at->format('d/m/Y H:i') }}</p>
     <p>Kasir: {{ $transaksi->user?->name ?? '-' }}</p>
     @if($transaksi->order)
-    <p>Meja: {{ $transaksi->order->meja?->nomor_meja ?? '-' }}</p>
+        @if($transaksi->order->meja)
+    <p>Meja: {{ $transaksi->order->meja->nomor_meja }}</p>
+        @elseif($transaksi->order->tipe_pesanan)
+    <p>Tipe: {{ $transaksi->order->tipe_pesanan == 'takeaway' ? 'Take Away' : 'Delivery' }}</p>
+            @if($transaksi->order->nama_pelanggan)
+    <p>Pelanggan: {{ $transaksi->order->nama_pelanggan }} @if($transaksi->order->no_hp)({{ $transaksi->order->no_hp }})@endif</p>
+            @endif
+        @endif
     @endif
     <div class="line"></div>
     <table>

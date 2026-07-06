@@ -16,7 +16,10 @@
                     D'LARIS — tempat di mana setiap momen terasa istimewa.
                 </p>
                 <div class="d-flex flex-wrap gap-3 reveal" style="transition-delay:0.3s">
-                    <a href="{{ route('pelanggan.menu') }}" class="btn-hero-primary">
+                    <a href="{{ route('takeaway') }}" class="btn-hero-primary">
+                        <i class="fa-solid fa-bag-shopping"></i> Pesan Takeaway
+                    </a>
+                    <a href="{{ route('pelanggan.menu') }}" class="btn-hero-outline">
                         <i class="fa-solid fa-utensils"></i> Lihat Menu
                     </a>
                     @guest

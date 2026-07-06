@@ -282,3 +282,15 @@
             .cart-btn span:not(.cart-count){display:none}
             .cat-pill{font-size:.7rem;padding:.3rem .65rem}
         }
+        .takeaway-form{
+            padding:.4rem 0 .2rem;
+        }
+        .takeaway-form input{
+            border:1px solid rgba(74,44,42,0.12);
+            background:var(--warm-white);
+            color:var(--coffee);
+        }
+        .takeaway-form input:focus{
+            border-color:var(--gold);
+            box-shadow:0 0 0 3px var(--gold-glow);
+        }

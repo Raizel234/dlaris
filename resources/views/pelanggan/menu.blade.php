@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Menu — {{ config('app.name') }}</title>
-    <meta name="description" content="Pesan makanan dan minuman favorit Anda langsung dari meja di D'LARIS Cafe & Karaoke.">
+    <meta name="description" content="Pesan makanan dan minuman favorit Anda {{ $takeaway ? 'untuk takeaway' : 'langsung dari meja' }} di D'LARIS Cafe & Karaoke.">
     @vite(['resources/css/bootstrap.css', 'resources/css/pelanggan.css', 'resources/js/bootstrap.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,6 +24,11 @@
             <div class="meja-badge">
                 <i class="fa-solid fa-chair" style="font-size:.65rem;"></i>
                 Meja {{ $meja->nomor_meja }}
+            </div>
+            @elseif(!empty($takeaway))
+            <div class="meja-badge" style="background:var(--coffee-gold);color:#fff;">
+                <i class="fa-solid fa-bag-shopping" style="font-size:.65rem;"></i>
+                Takeaway
             </div>
             @endif
         </div>
@@ -87,10 +92,20 @@
             </div>
             <div class="cart-total-val" id="cartTotalVal">Rp 0</div>
         </div>
+        @if(!empty($takeaway))
+        <div class="takeaway-form" id="takeawayForm">
+            <div class="mb-2">
+                <input type="text" class="form-control form-control-sm" id="inputNama" placeholder="Nama pemesan *" style="border-radius:8px;font-size:.82rem;">
+            </div>
+            <div class="mb-2">
+                <input type="text" class="form-control form-control-sm" id="inputHp" placeholder="No. WhatsApp *" style="border-radius:8px;font-size:.82rem;">
+            </div>
+        </div>
+        @endif
         @auth
         <button class="btn-order" id="btnOrder" onclick="submitOrder()" disabled>
             <i class="fa-solid fa-check-circle"></i>
-            <span id="btnOrderText">Pesan Sekarang</span>
+            <span id="btnOrderText">{{ !empty($takeaway) ? 'Pesan untuk Takeaway' : 'Pesan Sekarang' }}</span>
         </button>
         @else
         <a href="{{ route('login') }}?redirect={{ url()->current() }}" class="btn-add-outline" style="margin-top:0;padding:.7rem;">
@@ -146,6 +161,7 @@ const state = {
     selectedKategori: null, cartOpen: false, loading: false, loadingOrder: false,
     searchTimeout: null, modalMenu: null, modalQty: 1,
     isAuth: {{ Auth::check() ? 'true' : 'false' }},
+    isTakeaway: {{ !empty($takeaway) ? 'true' : 'false' }},
     mejaId: {{ $meja?->id ?? 'null' }},
 };
 
@@ -391,12 +407,24 @@ function updateNote(menuId, note) {
 
 function submitOrder() {
     if (state.loadingOrder) return;
+    if (state.isTakeaway) {
+        const nama = document.getElementById('inputNama')?.value.trim();
+        const hp = document.getElementById('inputHp')?.value.trim();
+        if (!nama) { showToast('Masukkan nama pemesan', 'error'); document.getElementById('inputNama')?.focus(); return; }
+        if (!hp) { showToast('Masukkan nomor WhatsApp', 'error'); document.getElementById('inputHp')?.focus(); return; }
+    }
     state.loadingOrder = true;
     const btn = document.getElementById('btnOrder');
     const txt = document.getElementById('btnOrderText');
     btn.disabled = true;
     txt.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
-    axios.post('{{ route("pelanggan.order") }}', { meja_id: state.mejaId })
+    const payload = { meja_id: state.mejaId };
+    if (state.isTakeaway) {
+        payload.tipe_pesanan = 'takeaway';
+        payload.nama_pelanggan = document.getElementById('inputNama').value.trim();
+        payload.no_hp = document.getElementById('inputHp').value.trim();
+    }
+    axios.post('{{ route("pelanggan.order") }}', payload)
         .then(res => {
             const nomor = res.data.data?.nomor_order || '';
             updateCartState({ items: [], total: 0, jumlah_item: 0 });
@@ -404,7 +432,7 @@ function submitOrder() {
             showToast('Pesanan #' + nomor + ' berhasil dibuat!');
         })
         .catch(err => showToast(err.response?.data?.message || 'Gagal membuat pesanan', 'error'))
-        .finally(() => { state.loadingOrder = false; btn.disabled = false; txt.textContent = 'Pesan Sekarang'; });
+        .finally(() => { state.loadingOrder = false; btn.disabled = false; txt.textContent = state.isTakeaway ? 'Pesan untuk Takeaway' : 'Pesan Sekarang'; });
 }
 
 function openCart() {
