@@ -298,12 +298,12 @@ class KasirController extends Controller
                 'message' => 'Pesanan berhasil dibuat',
                 'data' => $order->load(['items.menu', 'meja']),
             ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (\Throwable $e) {
+            try { DB::rollBack(); } catch (\Throwable $e2) {}
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal membuat pesanan: ' . $e->getMessage(),
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -345,7 +345,7 @@ class KasirController extends Controller
         if (in_array($request->status, ['diproses', 'selesai', 'dibatalkan'])) {
             try {
                 app(WhatsAppService::class)->sendOrderStatus($order);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::warning('WA notification failed: ' . $e->getMessage());
             }
         }
@@ -416,7 +416,7 @@ class KasirController extends Controller
 
             try {
                 app(WhatsAppService::class)->sendOrderConfirmation($order);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::warning('WA confirmation failed: ' . $e->getMessage());
             }
 
@@ -425,12 +425,12 @@ class KasirController extends Controller
                 'message' => 'Pembayaran berhasil',
                 'data' => $transaksi->load(['order.items.menu', 'order.meja']),
             ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (\Throwable $e) {
+            try { DB::rollBack(); } catch (\Throwable $e2) {}
 
             return response()->json([
                 'success' => false,
-                'message' => 'Pembayaran gagal: ' . $e->getMessage(),
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -558,12 +558,12 @@ class KasirController extends Controller
                 'message' => 'Booking karaoke berhasil',
                 'data' => $booking->load('ruangan'),
             ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (\Throwable $e) {
+            try { DB::rollBack(); } catch (\Throwable $e2) {}
 
             return response()->json([
                 'success' => false,
-                'message' => 'Booking gagal: ' . $e->getMessage(),
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -743,7 +743,7 @@ class KasirController extends Controller
 
             try {
                 app(WhatsAppService::class)->sendOrderConfirmation($order);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::warning('WA confirmation failed: ' . $e->getMessage());
             }
 
@@ -752,11 +752,11 @@ class KasirController extends Controller
                 'message' => 'Pembayaran split berhasil',
                 'data' => $transaksi->load(['order.items.menu', 'order.meja', 'splitPayments']),
             ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (\Throwable $e) {
+            try { DB::rollBack(); } catch (\Throwable $e2) {}
             return response()->json([
                 'success' => false,
-                'message' => 'Pembayaran gagal: ' . $e->getMessage(),
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
