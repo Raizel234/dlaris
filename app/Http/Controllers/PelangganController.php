@@ -227,13 +227,13 @@ class PelangganController extends Controller
         try {
             DB::beginTransaction();
 
-            $nomorOrder = 'ORD-' . now()->format('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
-
             $serviceChargePersen = (float) \App\Models\Setting::getValue('service_charge', 0);
             $pajakPersen = (float) \App\Models\Setting::getValue('pajak', 0);
             $ongkir = $request->tipe_pesanan === 'delivery' ? (float) \App\Models\Setting::getValue('ongkir', 5000) : 0;
 
-            $order = Order::create([
+            $nomorOrder = 'ORD-' . now()->format('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
+
+            $orderData = [
                 'user_id' => Auth::id(),
                 'meja_id' => $request->meja_id,
                 'tipe_pesanan' => $request->tipe_pesanan ?? 'dine_in',
@@ -245,13 +245,13 @@ class PelangganController extends Controller
                 'status' => 'menunggu',
                 'catatan' => $request->catatan,
                 'total' => $total,
-            ]);
+            ];
 
+            $order = new Order($orderData);
             $order->hitungGrandTotal($serviceChargePersen, $pajakPersen)->save();
 
             foreach ($cart as $item) {
-                OrderItem::create([
-                    'order_id' => $order->id,
+                $order->items()->create([
                     'menu_id' => $item['menu_id'],
                     'jumlah' => $item['jumlah'],
                     'harga' => $item['harga'],
@@ -271,7 +271,7 @@ class PelangganController extends Controller
             if ($order->tipe_pesanan !== 'dine_in') {
                 try {
                     app(WhatsAppService::class)->sendOrderConfirmation($order);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     \Illuminate\Support\Facades\Log::warning('WA confirmation failed: ' . $e->getMessage());
                 }
             }
@@ -279,10 +279,10 @@ class PelangganController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Pesanan berhasil dibuat',
-                'data' => $order->load(['items.menu', 'meja']),
+                'data' => $order->fresh()->load(['items.menu', 'meja']),
             ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
+        } catch (\Throwable $e) {
+            try { DB::rollBack(); } catch (\Throwable $e2) {}
 
             return response()->json([
                 'success' => false,
