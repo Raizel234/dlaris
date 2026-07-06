@@ -81,14 +81,14 @@
             </div>
         </div>
 
-        {{-- Keuangan --}}
+        {{-- Keuangan & Pengiriman --}}
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-5">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                 <i class="fa-solid fa-coins text-yellow-500"></i>
-                <h3 class="font-semibold text-gray-800">Keuangan</h3>
+                <h3 class="font-semibold text-gray-800">Keuangan & Pengiriman</h3>
             </div>
             <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Pajak (%)</label>
                         <div class="relative">
@@ -108,6 +108,16 @@
                             <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">%</span>
                         </div>
                         @error('service_charge') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Ongkos Kirim (Rp)</label>
+                        <div class="relative">
+                            <input type="number" name="ongkir" value="{{ old('ongkir', $settings['ongkir'] ?? 5000) }}"
+                                   step="500" min="0"
+                                   class="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all pr-12">
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">Rp</span>
+                        </div>
+                        @error('ongkir') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -156,6 +166,40 @@
                         <input type="time" name="jam_tutup" value="{{ old('jam_tutup', $settings['jam_tutup'] ?? '22:00') }}"
                                class="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all">
                         @error('jam_tutup') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- WhatsApp Notification --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-5">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
+                <i class="fa-brands fa-whatsapp text-green-500"></i>
+                <h3 class="font-semibold text-gray-800">Notifikasi WhatsApp</h3>
+            </div>
+            <div class="p-6">
+                <p class="text-xs text-gray-500 mb-4">Konfigurasi untuk mengirim notifikasi otomatis ke pelanggan via WhatsApp. Gunakan <a href="https://fonnte.com" target="_blank" class="text-emerald-600 hover:underline">Fonnte</a> atau API Gateway lain.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">API Key</label>
+                        <input type="text" name="wa_api_key" value="{{ old('wa_api_key', $settings['wa_api_key'] ?? '') }}"
+                               class="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                               placeholder="Masukkan API Key">
+                        @error('wa_api_key') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nomor Pengirim</label>
+                        <input type="text" name="wa_sender" value="{{ old('wa_sender', $settings['wa_sender'] ?? '') }}"
+                               class="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                               placeholder="08xxxxxxxxxx">
+                        @error('wa_sender') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">API URL</label>
+                        <input type="text" name="wa_api_url" value="{{ old('wa_api_url', $settings['wa_api_url'] ?? 'https://api.fonnte.com/send') }}"
+                               class="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                               placeholder="https://api.fonnte.com/send">
+                        @error('wa_api_url') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>

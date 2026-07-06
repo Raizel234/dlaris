@@ -16,6 +16,7 @@ use App\Models\Pelanggan;
 use App\Models\SplitPayment;
 use App\Models\Setting;
 use App\Services\StockService;
+use App\Services\WhatsAppService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -341,6 +342,14 @@ class KasirController extends Controller
 
         $order->update(['status' => $request->status]);
 
+        if (in_array($request->status, ['diproses', 'selesai', 'dibatalkan'])) {
+            try {
+                app(WhatsAppService::class)->sendOrderStatus($order);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('WA notification failed: ' . $e->getMessage());
+            }
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Status pesanan berhasil diubah',
@@ -404,6 +413,12 @@ class KasirController extends Controller
             app(StockService::class)->processPaymentStock($order);
 
             DB::commit();
+
+            try {
+                app(WhatsAppService::class)->sendOrderConfirmation($order);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('WA confirmation failed: ' . $e->getMessage());
+            }
 
             return response()->json([
                 'success' => true,
@@ -725,6 +740,12 @@ class KasirController extends Controller
             app(StockService::class)->processPaymentStock($order);
 
             DB::commit();
+
+            try {
+                app(WhatsAppService::class)->sendOrderConfirmation($order);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('WA confirmation failed: ' . $e->getMessage());
+            }
 
             return response()->json([
                 'success' => true,

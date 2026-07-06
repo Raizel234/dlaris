@@ -285,12 +285,20 @@
         .takeaway-form{
             padding:.4rem 0 .2rem;
         }
-        .takeaway-form input{
+        .takeaway-form input,
+        .takeaway-form select,
+        .takeaway-form textarea{
             border:1px solid rgba(74,44,42,0.12);
             background:var(--warm-white);
             color:var(--coffee);
         }
-        .takeaway-form input:focus{
+        .takeaway-form input:focus,
+        .takeaway-form select:focus,
+        .takeaway-form textarea:focus{
             border-color:var(--gold);
             box-shadow:0 0 0 3px var(--gold-glow);
+        }
+        .takeaway-form select{
+            appearance:auto;
+            -webkit-appearance:auto;
         }

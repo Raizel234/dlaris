@@ -272,6 +272,14 @@
                                         <span x-text="'(' + order.no_hp + ')'" style="color:#9ca3af;font-weight:400;"></span>
                                     </template>
                                 </div>
+                                <div class="order-meja-wrap" x-show="order.tipe_pesanan === 'delivery' &amp;&amp; order.alamat_pengiriman" style="margin-top:2px;">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <span x-text="order.alamat_pengiriman" style="font-size:.7rem;color:#6b7280;"></span>
+                                </div>
+                                <div class="order-meja-wrap" x-show="order.ongkir > 0" style="margin-top:2px;">
+                                    <i class="fa-solid fa-truck"></i>
+                                    <span x-text="'Ongkir: Rp ' + formatNum(order.ongkir)" style="font-size:.7rem;color:#f59e0b;"></span>
+                                </div>
                             </div>
                             <span class="badge" :class="'badge-' + order.status" x-text="order.status"></span>
                         </div>
@@ -312,7 +320,7 @@
                         {{-- Total --}}
                         <div class="order-total-row">
                             <span class="label">Total</span>
-                            <span class="amount">Rp <span x-text="formatNum(order.total)"></span></span>
+                            <span class="amount">Rp <span x-text="formatNum(order.grand_total > 0 ? order.grand_total : order.total)"></span></span>
                         </div>
 
                         {{-- Actions --}}
@@ -360,7 +368,7 @@
                         </div>
                         <div class="info-row" style="border-top:1px solid #e5e7eb;padding-top:0.5rem;margin-top:0.25rem;">
                             <span class="info-label font-bold" style="color:#1f2937;">Total</span>
-                            <span class="info-value font-bold" style="color:#d97706;font-size:1.125rem;">Rp <span x-text="formatNum(paymentOrder?.total)"></span></span>
+                            <span class="info-value font-bold" style="color:#d97706;font-size:1.125rem;">Rp <span x-text="formatNum(paymentOrder?.grand_total > 0 ? paymentOrder?.grand_total : paymentOrder?.total)"></span></span>
                         </div>
                         <div class="info-row" x-show="paymentOrder?.items">
                             <span class="info-label">Items</span>
@@ -441,9 +449,9 @@
 
                             <div class="split-summary">
                                 <span>Total dibayar:</span>
-                                <span :class="splitTotal === (paymentOrder?.total || 0) ? 'match' : 'mismatch'">
+                                <span :class="splitTotal === getTotal(paymentOrder) ? 'match' : 'mismatch'">
                                     Rp <span x-text="formatNum(splitTotal)"></span>
-                                    <span x-text="' / Rp ' + formatNum(paymentOrder?.total || 0)"></span>
+                                    <span x-text="' / Rp ' + formatNum(getTotal(paymentOrder))"></span>
                                 </span>
                             </div>
 
@@ -573,11 +581,12 @@ function pesananApp() {
 
         openPaymentModal(order) {
             this.paymentOrder = order;
-            this.paymentForm = { metode_bayar: 'tunai', nominal_bayar: order.total, kembalian: 0 };
+            const total = order.grand_total > 0 ? order.grand_total : order.total;
+            this.paymentForm = { metode_bayar: 'tunai', nominal_bayar: total, kembalian: 0 };
             this.showSplitPayment = false;
             this.splitPayments = [
-                { metode_bayar: 'tunai', jumlah: Math.round(order.total / 2), nominal_bayar: Math.round(order.total / 2) },
-                { metode_bayar: 'transfer', jumlah: Math.ceil(order.total / 2), nominal_bayar: Math.ceil(order.total / 2) },
+                { metode_bayar: 'tunai', jumlah: Math.round(total / 2), nominal_bayar: Math.round(total / 2) },
+                { metode_bayar: 'transfer', jumlah: Math.ceil(total / 2), nominal_bayar: Math.ceil(total / 2) },
             ];
             this.showPaymentModal = true;
             this.calculateKembalian();
@@ -589,17 +598,22 @@ function pesananApp() {
         },
 
         onMetodeChange() {
+            const total = this.getTotal(this.paymentOrder);
             if (this.paymentForm.metode_bayar !== 'tunai') {
-                this.paymentForm.nominal_bayar = this.paymentOrder?.total || 0;
+                this.paymentForm.nominal_bayar = total;
                 this.paymentForm.kembalian = 0;
             } else {
-                this.paymentForm.nominal_bayar = this.paymentOrder?.total || 0;
+                this.paymentForm.nominal_bayar = total;
                 this.calculateKembalian();
             }
         },
 
+        getTotal(order) {
+            return order ? (order.grand_total > 0 ? order.grand_total : order.total) : 0;
+        },
+
         calculateKembalian() {
-            const total = this.paymentOrder?.total || 0;
+            const total = this.getTotal(this.paymentOrder);
             const bayar = this.paymentForm.nominal_bayar || 0;
             if (this.paymentForm.metode_bayar !== 'tunai') {
                 this.paymentForm.kembalian = 0;
@@ -638,8 +652,9 @@ function pesananApp() {
             return 'Kurang: Rp ' + this.formatNum(Math.abs(k));
         },
         get paymentValid() {
+            const total = this.paymentOrder ? (this.paymentOrder.grand_total > 0 ? this.paymentOrder.grand_total : this.paymentOrder.total) : 0;
             if (this.paymentForm.metode_bayar === 'tunai') {
-                return (this.paymentForm.nominal_bayar || 0) >= (this.paymentOrder?.total || 0);
+                return (this.paymentForm.nominal_bayar || 0) >= total;
             }
             return true;
         },
@@ -647,11 +662,12 @@ function pesananApp() {
         submitPayment() {
             if (this.payLoading || !this.paymentValid) return;
             this.payLoading = true;
+            const total = this.getTotal(this.paymentOrder);
             axios.post('{{ url("admin/pos/order") }}/' + this.paymentOrder.id + '/bayar', {
                 metode_bayar: this.paymentForm.metode_bayar,
                 nominal_bayar: this.paymentForm.metode_bayar === 'tunai'
                     ? (this.paymentForm.nominal_bayar || 0)
-                    : (this.paymentOrder?.total || 0),
+                    : total,
             }).then(res => {
                 if (res.data.success) {
                     const d = res.data.data;
@@ -688,7 +704,7 @@ function pesananApp() {
         onSplitToggle() {
             if (!this.showSplitPayment) return;
             if (this.splitPayments.length === 0) {
-                const total = this.paymentOrder?.total || 0;
+                const total = this.getTotal(this.paymentOrder);
                 this.splitPayments = [
                     { metode_bayar: 'tunai', jumlah: Math.round(total / 2), nominal_bayar: Math.round(total / 2) },
                     { metode_bayar: 'transfer', jumlah: Math.ceil(total / 2), nominal_bayar: Math.ceil(total / 2) },
@@ -717,7 +733,7 @@ function pesananApp() {
         },
 
         get splitValid() {
-            const total = this.paymentOrder?.total || 0;
+            const total = this.getTotal(this.paymentOrder);
             const sum = this.splitTotal;
             if (sum === 0) return false;
             return Math.abs(sum - total) <= 100;

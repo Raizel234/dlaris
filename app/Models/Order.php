@@ -16,6 +16,11 @@ class Order extends Model
         'tipe_pesanan',
         'nama_pelanggan',
         'no_hp',
+        'alamat_pengiriman',
+        'ongkir',
+        'payment_method',
+        'payment_status',
+        'snap_token',
         'total',
         'diskon',
         'total_setelah_diskon',
@@ -30,6 +35,7 @@ class Order extends Model
         'total_setelah_diskon' => 'decimal:2',
         'pajak' => 'decimal:2',
         'service_charge' => 'decimal:2',
+        'ongkir' => 'decimal:2',
         'grand_total' => 'decimal:2',
     ];
 
@@ -68,7 +74,7 @@ class Order extends Model
         $this->total_setelah_diskon = $this->total - $this->diskon;
         $this->service_charge = $this->total_setelah_diskon * $serviceChargePersen / 100;
         $this->pajak = ($this->total_setelah_diskon + $this->service_charge) * $pajakPersen / 100;
-        $this->grand_total = $this->total_setelah_diskon + $this->service_charge + $this->pajak;
+        $this->grand_total = $this->total_setelah_diskon + $this->service_charge + $this->pajak + $this->ongkir;
         return $this;
     }
 }

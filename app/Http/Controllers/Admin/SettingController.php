@@ -21,7 +21,8 @@ class SettingController extends Controller
     {
         $keys = [
             'nama_toko', 'alamat', 'no_hp', 'pajak', 'service_charge',
-            'jam_buka', 'jam_tutup',
+            'ongkir', 'jam_buka', 'jam_tutup',
+            'wa_api_key', 'wa_sender', 'wa_api_url',
         ];
 
         Setting::setValue('auto_stock_deduction', $request->boolean('auto_stock_deduction'));

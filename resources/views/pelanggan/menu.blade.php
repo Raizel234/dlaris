@@ -10,7 +10,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+    @if(!empty($takeaway))
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+    @endif
 </head>
 <body>
 
@@ -95,17 +97,29 @@
         @if(!empty($takeaway))
         <div class="takeaway-form" id="takeawayForm">
             <div class="mb-2">
+                <select class="form-control form-control-sm" id="inputTipe" style="border-radius:8px;font-size:.82rem;" onchange="toggleTipePesanan()">
+                    <option value="takeaway">Take Away</option>
+                    <option value="delivery">Delivery (Antar)</option>
+                </select>
+            </div>
+            <div class="mb-2">
                 <input type="text" class="form-control form-control-sm" id="inputNama" placeholder="Nama pemesan *" style="border-radius:8px;font-size:.82rem;">
             </div>
             <div class="mb-2">
                 <input type="text" class="form-control form-control-sm" id="inputHp" placeholder="No. WhatsApp *" style="border-radius:8px;font-size:.82rem;">
+            </div>
+            <div class="mb-2" id="alamatWrap" style="display:none;">
+                <textarea class="form-control form-control-sm" id="inputAlamat" placeholder="Alamat pengiriman *" rows="2" style="border-radius:8px;font-size:.82rem;"></textarea>
+            </div>
+            <div id="ongkirInfo" class="mb-2" style="font-size:.75rem;color:var(--coffee-light);display:none;">
+                <i class="fa-solid fa-truck"></i> Ongkos kirim: <span id="ongkirNominal">Rp 0</span>
             </div>
         </div>
         @endif
         @auth
         <button class="btn-order" id="btnOrder" onclick="submitOrder()" disabled>
             <i class="fa-solid fa-check-circle"></i>
-            <span id="btnOrderText">{{ !empty($takeaway) ? 'Pesan untuk Takeaway' : 'Pesan Sekarang' }}</span>
+            <span id="btnOrderText">{{ !empty($takeaway) ? 'Pesan Sekarang' : 'Pesan Sekarang' }}</span>
         </button>
         @else
         <a href="{{ route('login') }}?redirect={{ url()->current() }}" class="btn-add-outline" style="margin-top:0;padding:.7rem;">
@@ -163,6 +177,7 @@ const state = {
     isAuth: {{ Auth::check() ? 'true' : 'false' }},
     isTakeaway: {{ !empty($takeaway) ? 'true' : 'false' }},
     mejaId: {{ $meja?->id ?? 'null' }},
+    ongkir: {{ !empty($takeaway) ? ((float) \App\Models\Setting::getValue('ongkir', 5000)) : 0 }},
 };
 
 const rupiah = v => 'Rp ' + new Intl.NumberFormat('id-ID').format(v || 0);
@@ -405,13 +420,32 @@ function updateNote(menuId, note) {
         .then(res => updateCartState(res.data.data)).catch(() => {});
 }
 
+function toggleTipePesanan() {
+    const tipe = document.getElementById('inputTipe')?.value;
+    const alamatWrap = document.getElementById('alamatWrap');
+    const ongkirInfo = document.getElementById('ongkirInfo');
+    if (tipe === 'delivery') {
+        alamatWrap.style.display = 'block';
+        ongkirInfo.style.display = 'block';
+        document.getElementById('ongkirNominal').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(state.ongkir);
+    } else {
+        alamatWrap.style.display = 'none';
+        ongkirInfo.style.display = 'none';
+    }
+}
+
 function submitOrder() {
     if (state.loadingOrder) return;
     if (state.isTakeaway) {
+        const tipe = document.getElementById('inputTipe')?.value;
         const nama = document.getElementById('inputNama')?.value.trim();
         const hp = document.getElementById('inputHp')?.value.trim();
         if (!nama) { showToast('Masukkan nama pemesan', 'error'); document.getElementById('inputNama')?.focus(); return; }
         if (!hp) { showToast('Masukkan nomor WhatsApp', 'error'); document.getElementById('inputHp')?.focus(); return; }
+        if (tipe === 'delivery') {
+            const alamat = document.getElementById('inputAlamat')?.value.trim();
+            if (!alamat) { showToast('Masukkan alamat pengiriman', 'error'); document.getElementById('inputAlamat')?.focus(); return; }
+        }
     }
     state.loadingOrder = true;
     const btn = document.getElementById('btnOrder');
@@ -420,19 +454,72 @@ function submitOrder() {
     txt.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
     const payload = { meja_id: state.mejaId };
     if (state.isTakeaway) {
-        payload.tipe_pesanan = 'takeaway';
+        payload.tipe_pesanan = document.getElementById('inputTipe')?.value || 'takeaway';
         payload.nama_pelanggan = document.getElementById('inputNama').value.trim();
         payload.no_hp = document.getElementById('inputHp').value.trim();
+        if (payload.tipe_pesanan === 'delivery') {
+            payload.alamat_pengiriman = document.getElementById('inputAlamat')?.value.trim() || '';
+        }
     }
     axios.post('{{ route("pelanggan.order") }}', payload)
         .then(res => {
-            const nomor = res.data.data?.nomor_order || '';
+            const order = res.data.data;
+            const nomor = order?.nomor_order || '';
             updateCartState({ items: [], total: 0, jumlah_item: 0 });
             closeCart();
             showToast('Pesanan #' + nomor + ' berhasil dibuat!');
+            showPaymentDialog(order);
         })
         .catch(err => showToast(err.response?.data?.message || 'Gagal membuat pesanan', 'error'))
-        .finally(() => { state.loadingOrder = false; btn.disabled = false; txt.textContent = state.isTakeaway ? 'Pesan untuk Takeaway' : 'Pesan Sekarang'; });
+        .finally(() => { state.loadingOrder = false; btn.disabled = false; txt.textContent = 'Pesan Sekarang'; });
+}
+
+function showPaymentDialog(order) {
+    if (!order || !order.id) return;
+    Swal.fire({
+        title: 'Pesanan Dibuat!',
+        html: `
+            <div style="text-align:left;font-size:.85rem;line-height:1.8;">
+                <p><strong>No. Order:</strong> #${order.nomor_order || ''}</p>
+                <p><strong>Total:</strong> Rp ${new Intl.NumberFormat('id-ID').format(order.grand_total || order.total || 0)}</p>
+                <p style="color:#6b7280;">Pesan akan diproses setelah pembayaran dikonfirmasi kasir.</p>
+            </div>
+        `,
+        icon: 'success',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fa-solid fa-credit-card"></i> Bayar Online',
+        cancelButtonText: '<i class="fa-solid fa-money-bill-wave"></i> Bayar di Kasir',
+        confirmButtonColor: '#4a2c2a',
+        cancelButtonColor: '#6b7280',
+        reverseButtons: true,
+    }).then(result => {
+        if (result.isConfirmed) {
+            initiatePayment(order.id);
+        }
+    });
+}
+
+function initiatePayment(orderId) {
+    Swal.fire({
+        title: 'Memproses Pembayaran...',
+        html: '<i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;"></i>',
+        showConfirmButton: false,
+        allowOutsideClick: false,
+    });
+    axios.post('{{ url("payment/pay") }}/' + orderId)
+        .then(res => {
+            Swal.close();
+            if (res.data.success) {
+                const snapToken = res.data.data.snap_token;
+                snap.pay(snapToken);
+            } else {
+                showToast(res.data.message || 'Gagal memproses pembayaran', 'error');
+            }
+        })
+        .catch(err => {
+            Swal.close();
+            showToast(err.response?.data?.message || 'Gagal memproses pembayaran', 'error');
+        });
 }
 
 function openCart() {

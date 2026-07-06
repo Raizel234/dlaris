@@ -10,6 +10,7 @@ use App\Models\OrderItem;
 use App\Models\Ruangan;
 use App\Models\Booking;
 use App\Models\Transaksi;
+use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -211,6 +212,7 @@ class PelangganController extends Controller
             'tipe_pesanan' => 'nullable|in:dine_in,takeaway,delivery',
             'nama_pelanggan' => 'required_if:tipe_pesanan,takeaway,delivery|nullable|string|max:100',
             'no_hp' => 'required_if:tipe_pesanan,takeaway,delivery|nullable|string|max:20',
+            'alamat_pengiriman' => 'required_if:tipe_pesanan,delivery|nullable|string|max:500',
             'catatan' => 'nullable|string|max:500',
         ]);
 
@@ -229,6 +231,7 @@ class PelangganController extends Controller
 
             $serviceChargePersen = (float) \App\Models\Setting::getValue('service_charge', 0);
             $pajakPersen = (float) \App\Models\Setting::getValue('pajak', 0);
+            $ongkir = $request->tipe_pesanan === 'delivery' ? (float) \App\Models\Setting::getValue('ongkir', 5000) : 0;
 
             $order = Order::create([
                 'user_id' => Auth::id(),
@@ -236,6 +239,8 @@ class PelangganController extends Controller
                 'tipe_pesanan' => $request->tipe_pesanan ?? 'dine_in',
                 'nama_pelanggan' => $request->nama_pelanggan,
                 'no_hp' => $request->no_hp,
+                'alamat_pengiriman' => $request->alamat_pengiriman,
+                'ongkir' => $ongkir,
                 'nomor_order' => $nomorOrder,
                 'status' => 'menunggu',
                 'catatan' => $request->catatan,
@@ -262,6 +267,14 @@ class PelangganController extends Controller
             DB::commit();
 
             session()->forget('cart_pelanggan');
+
+            if ($order->tipe_pesanan !== 'dine_in') {
+                try {
+                    app(WhatsAppService::class)->sendOrderConfirmation($order);
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::warning('WA confirmation failed: ' . $e->getMessage());
+                }
+            }
 
             return response()->json([
                 'success' => true,

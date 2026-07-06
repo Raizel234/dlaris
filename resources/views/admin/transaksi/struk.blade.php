@@ -34,6 +34,9 @@
             @if($transaksi->order->nama_pelanggan)
     <p>Pelanggan: {{ $transaksi->order->nama_pelanggan }} @if($transaksi->order->no_hp)({{ $transaksi->order->no_hp }})@endif</p>
             @endif
+            @if($transaksi->order->tipe_pesanan === 'delivery' && $transaksi->order->alamat_pengiriman)
+    <p>Alamat: {{ $transaksi->order->alamat_pengiriman }}</p>
+            @endif
         @endif
     @endif
     <div class="line"></div>
@@ -71,6 +74,12 @@
         <tr>
             <td>Pajak</td>
             <td class="right">Rp {{ number_format($transaksi->order->pajak, 0, ',', '.') }}</td>
+        </tr>
+        @endif
+        @if($transaksi->order && $transaksi->order->ongkir > 0)
+        <tr>
+            <td>Ongkir</td>
+            <td class="right">Rp {{ number_format($transaksi->order->ongkir, 0, ',', '.') }}</td>
         </tr>
         @endif
         <tr class="total">

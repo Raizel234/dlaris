@@ -218,6 +218,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/booking/daftar', [PelangganController::class, 'daftarBooking'])->name('pelanggan.booking.daftar');
 });
 
+// Payment
+use App\Http\Controllers\PaymentController;
+
+Route::prefix('payment')->name('payment.')->group(function () {
+    Route::post('notification', [PaymentController::class, 'notification'])->name('notification');
+    Route::get('finish', [PaymentController::class, 'finish'])->name('finish');
+    Route::get('unfinish', [PaymentController::class, 'unfinish'])->name('unfinish');
+    Route::get('error', [PaymentController::class, 'error'])->name('error');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('payment/pay/{order}', [PaymentController::class, 'pay'])->name('payment.pay');
+});
+
 // Rating
 use App\Http\Controllers\Admin\RatingController;
 Route::middleware('auth')->group(function () {

@@ -63,6 +63,12 @@
                             <td class="px-4 py-2 text-right">Rp {{ number_format($transaksi->order->service_charge, 0, ',', '.') }}</td>
                         </tr>
                         @endif
+                        @if($transaksi->order->ongkir > 0)
+                        <tr>
+                            <td colspan="3" class="px-4 py-2 text-right text-gray-600">Ongkos Kirim</td>
+                            <td class="px-4 py-2 text-right">Rp {{ number_format($transaksi->order->ongkir, 0, ',', '.') }}</td>
+                        </tr>
+                        @endif
                         <tr class="bg-gray-50">
                             <td colspan="3" class="px-4 py-2 text-right font-bold text-lg">Total</td>
                             <td class="px-4 py-2 text-right font-bold text-lg text-green-600">Rp {{ number_format($transaksi->total, 0, ',', '.') }}</td>
@@ -131,6 +137,12 @@
                 <div class="flex justify-between">
                     <span class="text-gray-500">Pelanggan</span>
                     <span class="font-medium">{{ $transaksi->order->nama_pelanggan }} @if($transaksi->order->no_hp)({{ $transaksi->order->no_hp }})@endif</span>
+                </div>
+                @endif
+                @if($transaksi->order && $transaksi->order->tipe_pesanan === 'delivery' && $transaksi->order->alamat_pengiriman)
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Alamat</span>
+                    <span class="font-medium text-right max-w-[200px]">{{ $transaksi->order->alamat_pengiriman }}</span>
                 </div>
                 @endif
                 <div class="flex justify-between">
