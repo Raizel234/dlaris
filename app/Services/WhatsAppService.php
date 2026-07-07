@@ -106,6 +106,61 @@ class WhatsAppService
         return $this->sendMessage($phone, $message);
     }
 
+    public function sendOrderNotificationToStore(Order $order): bool
+    {
+        $storePhone = Setting::getValue('wa_store_number', '');
+        if (empty($storePhone)) return false;
+
+        $storePhone = $this->normalizePhone($storePhone);
+        if (!$storePhone) return false;
+
+        $tipeLabel = match ($order->tipe_pesanan) {
+            'takeaway' => 'Take Away',
+            'delivery' => 'Delivery',
+            default => 'Dine In',
+        };
+
+        $items = '';
+        foreach ($order->items as $i => $item) {
+            $items .= ($i + 1) . ". {$item->menu?->nama} x{$item->jumlah} = Rp " . number_format($item->jumlah * $item->harga, 0, ',', '.') . "\n";
+        }
+
+        $message = "━━━ *D'LARIS Cafe & Karaoke* ━━━\n"
+            . "🛒 *PESANAN BARU MASUK!*\n"
+            . "─────────────────\n"
+            . "No. Order : *{$order->nomor_order}*\n"
+            . "Tipe      : {$tipeLabel}\n"
+            . "Pelanggan : {$order->nama_pelanggan}\n"
+            . "No. HP    : {$order->no_hp}\n";
+
+        if ($order->tipe_pesanan === 'delivery' && $order->alamat_pengiriman) {
+            $message .= "Alamat    : {$order->alamat_pengiriman}\n";
+        }
+
+        $message .= "─────────────────\n"
+            . "*PESANAN:*\n{$items}"
+            . "─────────────────\n"
+            . "Subtotal  : Rp " . number_format($order->total, 0, ',', '.') . "\n";
+
+        if ($order->ongkir > 0) {
+            $message .= "Ongkir    : Rp " . number_format($order->ongkir, 0, ',', '.') . "\n";
+        }
+        if ($order->service_charge > 0) {
+            $message .= "Service   : Rp " . number_format($order->service_charge, 0, ',', '.') . "\n";
+        }
+        if ($order->pajak > 0) {
+            $message .= "Pajak     : Rp " . number_format($order->pajak, 0, ',', '.') . "\n";
+        }
+
+        $message .= "─────────────────\n"
+            . "*TOTAL* : Rp " . number_format($order->grand_total, 0, ',', '.') . "\n"
+            . "─────────────────\n"
+            . "Silakan segera diproses! 🙏\n"
+            . "━━━━━━━━━━━━━━━━━━━";
+
+        return $this->sendMessage($storePhone, $message);
+    }
+
     public function sendOrderStatus(Order $order): bool
     {
         $phone = $this->normalizePhone($order->no_hp);

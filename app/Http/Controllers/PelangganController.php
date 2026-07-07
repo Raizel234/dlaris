@@ -270,9 +270,11 @@ class PelangganController extends Controller
 
             if ($order->tipe_pesanan !== 'dine_in') {
                 try {
-                    app(WhatsAppService::class)->sendOrderConfirmation($order);
+                    $wa = app(WhatsAppService::class);
+                    $wa->sendOrderConfirmation($order);
+                    $wa->sendOrderNotificationToStore($order);
                 } catch (\Throwable $e) {
-                    \Illuminate\Support\Facades\Log::warning('WA confirmation failed: ' . $e->getMessage());
+                    \Illuminate\Support\Facades\Log::warning('WA notification failed: ' . $e->getMessage());
                 }
             }
 

@@ -63,7 +63,6 @@
     <div class="d-none d-md-block">
         @include('welcome._stats')
         @include('welcome._services')
-        @include('welcome._menu-preview')
         @include('welcome._about')
         @include('welcome._gallery')
         @include('welcome._testimonials')

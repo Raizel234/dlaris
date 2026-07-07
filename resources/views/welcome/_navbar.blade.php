@@ -16,7 +16,7 @@
             </div>
 
             <div class="d-none d-lg-flex align-items-center gap-2">
-                <a href="{{ route('takeaway') }}" class="btn-nav-primary" style="background:var(--coffee-gold);">
+                <a href="{{ route('takeaway') }}" class="btn-nav-primary" style="background:var(--gold);">
                     <i class="fa-solid fa-bag-shopping"></i> Takeaway
                 </a>
                 @auth

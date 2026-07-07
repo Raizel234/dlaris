@@ -28,7 +28,7 @@
                 Meja {{ $meja->nomor_meja }}
             </div>
             @elseif(!empty($takeaway))
-            <div class="meja-badge" style="background:var(--coffee-gold);color:#fff;">
+            <div class="meja-badge" style="background:var(--gold);color:#fff;">
                 <i class="fa-solid fa-bag-shopping" style="font-size:.65rem;"></i>
                 Takeaway
             </div>

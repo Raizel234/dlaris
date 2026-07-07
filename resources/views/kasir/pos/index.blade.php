@@ -344,6 +344,28 @@
                                             <span x-text="timeAgo(order.created_at)"></span>
                                         </div>
 
+                                        <div class="oc-info" x-show="!order.meja && order.tipe_pesanan">
+                                            <div class="oc-info-item">
+                                                <i class="fa-solid fa-bag-shopping"></i>
+                                                <span x-text="order.tipe_pesanan === 'takeaway' ? 'Take Away' : order.tipe_pesanan === 'delivery' ? 'Delivery' : ''"></span>
+                                            </div>
+                                            <div class="oc-info-item" x-show="order.nama_pelanggan">
+                                                <i class="fa-solid fa-user"></i>
+                                                <span x-text="order.nama_pelanggan"></span>
+                                                <template x-if="order.no_hp">
+                                                    <span x-text="'(' + order.no_hp + ')'" style="color:#9ca3af;font-weight:400;"></span>
+                                                </template>
+                                            </div>
+                                            <div class="oc-info-item" x-show="order.tipe_pesanan === 'delivery' && order.alamat_pengiriman">
+                                                <i class="fa-solid fa-location-dot"></i>
+                                                <span x-text="order.alamat_pengiriman" style="font-size:.7rem;color:#6b7280;"></span>
+                                            </div>
+                                            <div class="oc-info-item" x-show="order.ongkir > 0">
+                                                <i class="fa-solid fa-truck"></i>
+                                                <span x-text="'Ongkir: Rp ' + formatNum(order.ongkir)" style="font-size:.7rem;color:#f59e0b;"></span>
+                                            </div>
+                                        </div>
+
                                         <div class="oi-list">
                                             <template x-for="(item, i) in order.items" :key="item.id">
                                                 <div class="oi-row" x-show="i < 9 || order._showAll">

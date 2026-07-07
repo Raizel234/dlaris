@@ -179,7 +179,7 @@
             </div>
             <div class="p-6">
                 <p class="text-xs text-gray-500 mb-4">Konfigurasi untuk mengirim notifikasi otomatis ke pelanggan via WhatsApp. Gunakan <a href="https://fonnte.com" target="_blank" class="text-emerald-600 hover:underline">Fonnte</a> atau API Gateway lain.</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">API Key</label>
                         <input type="text" name="wa_api_key" value="{{ old('wa_api_key', $settings['wa_api_key'] ?? '') }}"
@@ -188,18 +188,25 @@
                         @error('wa_api_key') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nomor Pengirim</label>
-                        <input type="text" name="wa_sender" value="{{ old('wa_sender', $settings['wa_sender'] ?? '') }}"
-                               class="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
-                               placeholder="08xxxxxxxxxx">
-                        @error('wa_sender') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">API URL</label>
                         <input type="text" name="wa_api_url" value="{{ old('wa_api_url', $settings['wa_api_url'] ?? 'https://api.fonnte.com/send') }}"
                                class="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
                                placeholder="https://api.fonnte.com/send">
                         @error('wa_api_url') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nomor Notifikasi Toko</label>
+                        <input type="text" name="wa_store_number" value="{{ old('wa_store_number', $settings['wa_store_number'] ?? '') }}"
+                               class="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                               placeholder="08xxxxxxxxxx">
+                        @error('wa_store_number') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nomor Pengirim (opsional)</label>
+                        <input type="text" name="wa_sender" value="{{ old('wa_sender', $settings['wa_sender'] ?? '') }}"
+                               class="w-full border border-gray-300 rounded-lg px-3.5 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                               placeholder="08xxxxxxxxxx">
+                        @error('wa_sender') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>

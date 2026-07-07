@@ -26,6 +26,7 @@ class UpdateSettingRequest extends FormRequest
             'wa_api_key' => 'nullable|string|max:255',
             'wa_sender' => 'nullable|string|max:50',
             'wa_api_url' => 'nullable|string|max:255',
+            'wa_store_number' => 'nullable|string|max:50',
         ];
     }
 }
