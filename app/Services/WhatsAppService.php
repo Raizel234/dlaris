@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Log;
 
 class WhatsAppService
 {
-    protected string $apiKey;
-    protected string $sender;
-    protected string $apiUrl;
+    protected ?string $apiKey;
+    protected ?string $sender;
+    protected ?string $apiUrl;
 
     public function __construct()
     {
